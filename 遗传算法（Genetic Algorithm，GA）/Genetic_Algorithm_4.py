@@ -40,7 +40,6 @@ def generate_initial_population(population_size, num_variables, flag):
     return population
 
 
-
 # 从二进制编码转换为十进制数值
 def binary_to_decimal(population, bounds):
     decimal_population = []  # 存储所有染色体的十进制数值
@@ -56,7 +55,6 @@ def binary_to_decimal(population, bounds):
         decimal_population.append(decimals)  # 将包含两个变量的十进制数值列表添加到总列表中
     # print("decimal_population:",decimal_population)
     return decimal_population  # 返回所有染色体映射后的十进制数值列表
-
 
 
 # 十进制数值转换为二进制编码
@@ -79,7 +77,7 @@ def decimal_to_binary(decimal_values, num_bits, bounds):
 
 # 适应度函数
 def fitness_function(individual):
-    if flag==1:
+    if flag == 1:
         x1, x2 = individual[0][0], individual[1][0]  # 解析每个变量的值
     else:
         x1, x2 = individual[0], individual[1]
@@ -91,7 +89,7 @@ def fitness_function(individual):
 def compute_fitness(population, flag):
     # print(population)
     fitness_values = []
-    if flag ==1:
+    if flag == 1:
         # 遍历每一个十进制数，计算适应度值并添加到适应度值列表中
         for individual in population:
             # 调用适应度函数，计算适应度值
@@ -140,7 +138,6 @@ def selection(population, fitness_values, num_parents, flag):
     return parents
 
 
-
 # 计算汉明码距离
 def hamming_distance(a, b):
     return sum(x != y for x, y in zip(a, b))
@@ -155,8 +152,6 @@ def euclidean_distance(u, v):
     return dist
 
 
-
-
 # 带距离的交叉
 def crossover_with_avoidance(parents, crossover_rate, threshold, flag):
     offspring = []
@@ -166,8 +161,6 @@ def crossover_with_avoidance(parents, crossover_rate, threshold, flag):
     for i in range(0, num_parents - 1, 2):
         parent1 = parents[i]
         parent2 = parents[i + 1]
-        # print(parent1)
-        # print(parent2)
 
         if flag == 1:
             distance = hamming_distance(parent1, parent2)
@@ -181,7 +174,6 @@ def crossover_with_avoidance(parents, crossover_rate, threshold, flag):
                 offspring2 = parent2
         else:
             distance = euclidean_distance(parent1, parent2)
-            # print(distance)
             threshold = 1
             if np.random.random() < crossover_rate and distance > threshold:
                 alpha1 = np.random.uniform(0, 1)
@@ -195,14 +187,13 @@ def crossover_with_avoidance(parents, crossover_rate, threshold, flag):
                 offspring1 = parent1
                 offspring2 = parent2
 
-        #print(offspring1)
-        #print(offspring2)
+        # print(offspring1)
+        # print(offspring2)
         offspring.append(offspring1)
         offspring.append(offspring2)
 
     # print("offspring:",offspring)
     return offspring
-
 
 
 # 变异操作
@@ -233,7 +224,6 @@ def mutation(offspring, mutation_rate, flag, down, up):
                             offspring[i][pos] = new_value
     # 返回变异后的后代
     return offspring
-
 
 
 if __name__ == '__main__':
@@ -268,7 +258,7 @@ if __name__ == '__main__':
             # print("offspring:", offspring)
 
             # 变异操作
-            after_offspring = mutation(offspring, mutation_rate, flag,-10,10)
+            after_offspring = mutation(offspring, mutation_rate, flag, -10, 10)
             # print("after_offspring:", after_offspring)
 
             split_offspring = []
@@ -333,7 +323,7 @@ if __name__ == '__main__':
             offspring = crossover_with_avoidance(parents, crossover_rate, threshold, flag)
 
             # 变异操作
-            after_offspring = mutation(offspring, mutation_rate, flag,-10,10)
+            after_offspring = mutation(offspring, mutation_rate, flag, -10, 10)
 
             # 得到新的种群
             population = after_offspring

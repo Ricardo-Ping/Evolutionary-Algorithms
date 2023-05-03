@@ -5,7 +5,7 @@
 # @Project : Genetic Algorithm.py
 # @Function ：
 # fitness_function_factory.py
-from fitness_function import MyFitnessFunction, Bent_Cigar
+from fitness_function import MyFitnessFunction, Init_var, Oper_var
 
 
 class FitnessFunctionFactory:
@@ -14,7 +14,9 @@ class FitnessFunctionFactory:
     def create_fitness_function(function_type):
         if function_type == 'my_fitness_function':
             return MyFitnessFunction()
-        elif function_type == 'Bent_Cigar':
-            return Bent_Cigar()
+        elif function_type == 'Init_var':
+            return Init_var()
+        elif function_type == 'Oper_var':
+            return Oper_var()
         else:
             raise ValueError("Invalid fitness function type")

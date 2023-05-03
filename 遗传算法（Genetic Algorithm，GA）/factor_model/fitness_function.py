@@ -36,7 +36,22 @@ class MyFitnessFunction(FitnessFunction):
         return y
 
 
-class Bent_Cigar(FitnessFunction):
+class Init_var(FitnessFunction):
+
+    def calculate_4(self, x1, x2, x3, x4):
+        pass
+
+    def calculate_3(self, x1, x2, x3):
+        pass
+
+    def calculate(self, *args):
+        x1 = args[0]
+        xs = args[1:]
+        y = x1 ** 2 + 1e6 * sum(map(lambda x: x ** 2, xs))
+        return y
+
+
+class Oper_var(FitnessFunction):
 
     def calculate_4(self, x1, x2, x3, x4):
         pass

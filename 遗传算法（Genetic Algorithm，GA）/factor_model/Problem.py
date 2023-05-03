@@ -27,7 +27,7 @@ class SampleProblem:
     def run(self):
         self.ga_instance.run()
 
-class Bent_Cigar:
+class Init_var:
     def __init__(self, population_size, num_variables, num_bits, num_generations, num_parents, crossover_rate, mutation_rate,
                  threshold, flag, bounds, fitness_function_type):
         if flag == "1":
@@ -41,3 +41,15 @@ class Bent_Cigar:
         self.ga_instance.run()
 
 
+class Oper_var:
+    def __init__(self, population_size, num_variables, num_bits, num_generations, num_parents, crossover_rate, mutation_rate,
+                 threshold, flag, bounds, fitness_function_type):
+        if flag == "1":
+            self.ga_instance = GeneticAlgorithm_varible_Binary(
+                population_size, num_variables, num_bits, num_generations, num_parents, crossover_rate, mutation_rate,
+                threshold, bounds, fitness_function_type)
+        else:
+            raise ValueError("Invalid flag")
+
+    def run(self):
+        self.ga_instance.run()

@@ -6,7 +6,7 @@
 # @Function ：
 
 # GeneticAlgorithmFactory.py
-from Problem import SampleProblem, Bent_Cigar
+from Problem import SampleProblem, Init_var, Oper_var
 
 
 class GeneticAlgorithmFactory:
@@ -15,7 +15,9 @@ class GeneticAlgorithmFactory:
         if problem_type == 'SampleProblem':
             return SampleProblem(*args, **kwargs)
         # Add other problem types here
-        elif problem_type == 'Bent_Cigar':
-            return Bent_Cigar(*args, **kwargs)
+        elif problem_type == 'Init_var':
+            return Init_var(*args, **kwargs)
+        elif problem_type == 'Oper_var':
+            return Oper_var(*args, **kwargs)
         else:
             raise ValueError("Invalid problem type")

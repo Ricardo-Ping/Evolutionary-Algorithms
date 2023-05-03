@@ -26,21 +26,24 @@ if __name__ == '__main__':
     # 使用 GeneticAlgorithmFactory 创建 SampleProblem 实例
     print('请选择编码方式，如果选择二进制则选1，如果选择实数择选0')
     flag = input()
-    print('请选择不变长编码（my_fitness_function）还是变长编码（Bent_Cigar）')
+    print('请选择不变长编码（my_fitness_function）还是变长编码（Init_var）或者操作时变长（Oper_var）')
     fitness_function_type = input()
     if fitness_function_type == "my_fitness_function":
         num_bits_all = num_bits
         problem_type = 'SampleProblem'
-    elif fitness_function_type == "Bent_Cigar":
+    elif fitness_function_type == "Init_var":
         num_bits_all = num_bits_list
-        problem_type = "Bent_Cigar"
+        problem_type = "Init_var"
+    elif fitness_function_type == 'Oper_var':
+        num_bits_all = num_bits_list
+        problem_type = "Oper_var"
 
     problem = GeneticAlgorithmFactory.create_genetic_algorithm(
         problem_type=problem_type,
         population_size=population_size,
         num_variables=num_variables,
         num_bits=num_bits_all,
-        num_generations=num_generations,
+        num_generations =num_generations,
         num_parents=num_parents,
         crossover_rate=crossover_rate,
         mutation_rate=mutation_rate,

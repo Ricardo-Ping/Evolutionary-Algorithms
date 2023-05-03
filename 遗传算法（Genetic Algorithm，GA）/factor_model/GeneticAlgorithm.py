@@ -603,3 +603,49 @@ class GeneticAlgorithm_varible_Binary(GeneticAlgorithm):
         # 显示图例和图形
         plt.legend()
         plt.show()
+
+
+class GeneticAlgorithm_VariableLength(GeneticAlgorithm_varible_Binary):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def crossover_with_avoidance(self, parents):
+        offspring = []
+        num_parents = len(parents)
+
+        for i in range(0, num_parents - 1, 2):
+            parent1 = parents[i]
+            parent2 = parents[i + 1]
+
+            distance = self.hamming_distance(parent1, parent2)
+
+            if random.random() < self.crossover_rate and distance > self.threshold:
+                crossover_point = random.randint(1, min(len(parent1), len(parent2)))
+                offspring1 = parent1[:crossover_point] + parent2[crossover_point:]
+                offspring2 = parent2[:crossover_point] + parent1[crossover_point:]
+            else:
+                offspring1 = parent1
+                offspring2 = parent2
+
+            offspring.append(offspring1)
+            offspring.append(offspring2)
+
+        return offspring
+
+    def mutation(self, offspring, down, up):
+        for i in range(len(offspring)):
+            for j in range(len(offspring[i])):
+                if random.uniform(0, 1) <= self.mutation_rate:
+                    offspring[i][j] = 1 - offspring[i][j]
+
+            # 随机增加或删除基因
+            if random.uniform(0, 1) <= self.mutation_rate:
+                if random.choice([True, False]):
+                    # 添加基因
+                    offspring[i].append(random.choice([0, 1]))
+                else:
+                    # 删除基因
+                    if len(offspring[i]) > 1:
+                        del offspring[i][-1]
+
+        return offspring

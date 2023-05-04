@@ -1,6 +1,5 @@
 # 进化算法Evolutionary Algorithms
 
-
 **说明：**
 
 包含了遗传算法Genetic Algorithm的代码
@@ -8,7 +7,6 @@
 详细文件说明：
 
 Genetic Algorithm:是基础的遗传算法代码：应用了二进制的编码和解码
-
 
 Genetic Algorithm_2:在之前的遗传算法基础上加上三个功能：
 
@@ -18,9 +16,7 @@ Genetic Algorithm_2:在之前的遗传算法基础上加上三个功能：
 
 3.进行近亲交叉回避（计算汉明码距离和欧式距离）
 
-
 Genetic Algorithm_3：把实数部分改为一个
-
 
 Genetic Algorithm_4：修改适应度函数为二元函数
 
@@ -35,10 +31,8 @@ factor_model:把遗传算法做成了工厂模型，主要分为问题工厂、�
    2. 初始化变长编码
    
    3. 操作时变长编码
-
-
-
-
+   
+   4. 加入梯度下降（实数编码中也有）
 
 **下载环境：**
 

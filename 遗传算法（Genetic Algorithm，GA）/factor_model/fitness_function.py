@@ -64,3 +64,29 @@ class Oper_var(FitnessFunction):
         xs = args[1:]
         y = x1 ** 2 + 1e6 * sum(map(lambda x: x ** 2, xs))
         return y
+
+
+class BinaryWithGradient(FitnessFunction):
+
+    def calculate_4(self, x1, x2, x3, x4):
+        pass
+
+    def calculate_3(self, x1, x2, x3):
+        pass
+
+    def calculate(self, x1, x2):
+        y = 3 * (x1 ** 2 - x2) ** 2
+        return y
+
+
+class RealWithGradient(FitnessFunction):
+
+    def calculate_4(self, x1, x2, x3, x4):
+        pass
+
+    def calculate_3(self, x1, x2, x3):
+        pass
+
+    def calculate(self, x1, x2):
+        y = 3 * (x1 ** 2 - x2) ** 2
+        return y

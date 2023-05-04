@@ -649,3 +649,232 @@ class GeneticAlgorithm_VariableLength(GeneticAlgorithm_varible_Binary):
                         del offspring[i][-1]
 
         return offspring
+
+
+class GeneticAlgorithmBinaryWithGradient(GeneticAlgorithmBinary):
+    def __init__(self, population_size, num_variables, num_bits, num_generations, num_parents, crossover_rate,
+                 mutation_rate, threshold, bounds, fitness_function_type, local_search_rate=0.2, gradient_learning_rate=0.1, gradient_max_iter=50):
+        super().__init__(population_size, num_variables, num_bits, num_generations, num_parents, crossover_rate,
+                         mutation_rate, threshold, bounds, fitness_function_type)
+        self.local_search_rate = local_search_rate
+        self.gradient_learning_rate = gradient_learning_rate
+        self.gradient_max_iter = gradient_max_iter
+
+    # 梯度下降函数
+    def gradient_descent(self, individual_decimal):
+        x1, x2 = individual_decimal[0][0], individual_decimal[1][0]
+        for _ in range(self.gradient_max_iter):
+            gradient_x1 = 12 * x1 * (x1 ** 2 - x2)
+            gradient_x2 = -6 * (x1 ** 2 - x2)
+
+            # 防止溢出
+            if abs(gradient_x1) > 10 or abs(gradient_x2) > 10:
+                break
+
+            x1 = x1 - self.gradient_learning_rate * gradient_x1
+            x2 = x2 - self.gradient_learning_rate * gradient_x2
+        return [[x1], [x2]]
+
+    # 添加局部搜索方法
+    def apply_local_search(self, decimal_population):
+        for i in range(len(decimal_population)):
+            if np.random.random() < self.local_search_rate:
+                decimal_population[i] = self.gradient_descent(decimal_population[i])
+        return decimal_population
+
+    # 重写遗传算法的运行方法
+    def run(self):
+        # 初始化种群 生产的是population_size*num_bits的二维数组
+        population = self.generate_initial_population()
+        # print("population:",population)
+
+        # 迭代num_generations轮
+        best_fitness = float('-inf')
+        best_individual = None
+        best_fitnesses = []
+
+        for generation in range(self.num_generations):
+            # 二进制转换为十进制
+            decimal_population = self.binary_to_decimal(population)
+
+            # 应用局部搜索
+            decimal_population = self.apply_local_search(decimal_population)
+
+            # 计算适应度分数
+            fitness_values = self.compute_fitness(decimal_population)
+            # print("fitness_values:",fitness_values)
+            # 将当前种群深度拷贝一份用于下一代操作，避免直接修改当前种群
+            next_generation = copy.deepcopy(population)
+            merged_population = [individual[0] + individual[1] for individual in population]
+            # 选择父代个体
+            parents = self.selection(merged_population, fitness_values)
+            # print("select parents:",parents)
+            # 交叉操作
+            offspring = self.crossover_with_avoidance(parents)
+            # 变异操作
+            after_offspring = self.mutation(offspring, -10, 10)
+
+            split_offspring = []
+            for individual in after_offspring:
+                x1 = individual[:len(individual) // 2]
+                x2 = individual[len(individual) // 2:]
+                split_offspring.append([x1, x2])
+
+            # print("split_offspring:", split_offspring)
+
+            # 得到新的种群
+            population = split_offspring
+
+            # 找到当前一代中的最大适应度值的下标
+            max_fitness_index = 0
+            for i in range(1, len(fitness_values)):
+                if fitness_values[i] > fitness_values[max_fitness_index]:
+                    max_fitness_index = i
+
+            # 记录每一代的最好地适应度和个体
+
+            # 适应度分数
+            generation_best_fitness = fitness_values[max_fitness_index]
+            # print(generation_best_fitness)
+
+            # 适应度个体（十进制）
+            generation_best_individual = decimal_population[max_fitness_index]
+            # print(generation_best_individual)
+
+            best_fitnesses.append(generation_best_fitness)
+
+            # 将每一代最好地适应度和个体放入原始种群
+            population[0] = next_generation[max_fitness_index]
+            # print(population[0])
+
+            # 输出最佳个体的二进制编码和映射后的十进制值
+            best_individual_binary = self.decimal_to_binary(generation_best_individual)
+            # print(best_individual_binary)
+            flattened_individual = list(chain.from_iterable(generation_best_individual))
+            print(
+                f"Generation {generation + 1} - Best fitness: {generation_best_fitness:.6f}, Best individual - Binary: {best_individual_binary}, Decimal: {', '.join([f'{x:.6f}' for x in flattened_individual])}")
+            # 更新全局最优解
+            if generation_best_fitness > best_fitness:
+                best_fitness = generation_best_fitness
+                best_individual = generation_best_individual
+
+                # 如果找到了Best fitness大于 36300，就退出循环
+                if generation_best_fitness >= 36300:
+                    print(f"Solution found after {generation + 1} generations.")
+                    break
+
+            # 将最佳个体的十进制值转换为二进制编码并输出
+        best_individual_decimal = best_individual
+        best_individual_binary = self.decimal_to_binary(best_individual_decimal)
+        flattened_best_individual_binary = list(chain.from_iterable(best_individual_binary))
+        print(
+            f"\nFinal result - Best fitness: {best_fitness:.6f}, Best individual (decimal): {best_individual_decimal}, Best individual (binary): {', '.join([str(x) for x in flattened_best_individual_binary])}")
+        # 绘制每次迭代的最佳适应度
+        plt.plot(best_fitnesses, label='Best fitness per generation')
+        plt.xlabel('Generation')
+        plt.ylabel('Fitness')
+        plt.title('Best Fitness per Generation')
+
+        # 标记全局最优解
+        best_generation = best_fitnesses.index(best_fitness)
+        plt.plot(best_generation, best_fitness, 'ro', label='Global best solution')
+
+        # 显示图例和图形
+        plt.legend()
+        plt.show()
+
+
+class GeneticAlgorithmRealWithGradient(GeneticAlgorithmReal):
+    def __init__(self, population_size, num_variables, num_bits, num_generations, num_parents, crossover_rate,
+                 mutation_rate, threshold, bounds, fitness_function_type, local_search_rate=0.2, gradient_learning_rate=0.1, gradient_max_iter=50):
+        super().__init__(population_size, num_variables, num_bits, num_generations, num_parents, crossover_rate,
+                         mutation_rate, threshold, bounds, fitness_function_type)
+        self.local_search_rate = local_search_rate
+        self.gradient_learning_rate = gradient_learning_rate
+        self.gradient_max_iter = gradient_max_iter
+
+    def gradient_descent(self, individual):
+        x1, x2 = individual[0], individual[1]
+        for _ in range(self.gradient_max_iter):
+            gradient_x1 = 12 * x1 * (x1 ** 2 - x2)
+            gradient_x2 = -6 * (x1 ** 2 - x2)
+
+            # 防止溢出
+            if abs(gradient_x1) > 10 or abs(gradient_x2) > 10:
+                break
+
+            x1 = x1 - self.gradient_learning_rate * gradient_x1
+            x2 = x2 - self.gradient_learning_rate * gradient_x2
+        return [x1, x2]
+
+    def apply_local_search(self, population):
+        for i in range(len(population)):
+            if np.random.random() < self.local_search_rate:
+                population[i] = self.gradient_descent(population[i])
+        return population
+
+    def run(self):
+        # 初始化种群 生产的是population_size*num_bits的二维数组
+        population = self.generate_initial_population()
+
+        # 迭代num_generations轮
+        best_fitness = float('-inf')
+        best_individual = None
+        best_fitnesses = []
+
+        for generation in range(self.num_generations):
+            population = self.apply_local_search(population)
+            # 计算适应度分数
+            fitness_values = self.compute_fitness(population)
+            # 将当前种群深度拷贝一份用于下一代操作，避免直接修改当前种群
+            next_generation = copy.deepcopy(population)
+            # 选择父代个体
+            parents = self.selection(population, fitness_values)
+            # 交叉操作
+            offspring = self.crossover_with_avoidance(parents)
+            # 变异操作
+            after_offspring = self.mutation(offspring, -10, 10)
+            # 得到新的种群
+            population = after_offspring
+            # 找到当前一代中的最大适应度值的下标
+            max_fitness_index = fitness_values.index(max(fitness_values))
+            # 计算新种群（经过选择、交叉和变异操作后的种群）的适应度分数
+            new_fitness_values = self.compute_fitness(population)
+            # 找到新种群中的最小适应度值的下标
+            min_fitness_index = new_fitness_values.index(min(new_fitness_values))
+            # 记录每一代的最好地适应度和个体
+            generation_best_fitness = fitness_values[max_fitness_index]
+            generation_best_individual = next_generation[max_fitness_index]
+            best_fitnesses.append(generation_best_fitness)
+            # 用原始种群（next_generation）中具有最大适应度值的个体替换新种群（population）中具有最小适应度值的个体
+            population[min_fitness_index] = next_generation[max_fitness_index]
+            print(
+                f"Generation {generation + 1} - Best fitness: {generation_best_fitness:.6f}, Best individual: {generation_best_individual}")
+
+            # 更新全局最优解
+            if generation_best_fitness > best_fitness:
+                best_fitness = generation_best_fitness
+                best_individual = generation_best_individual
+
+                # 如果找到了Best fitness大于 3.85027，就退出循环
+                if generation_best_fitness >= 36300:
+                    print(f"Solution found after {generation + 1} generations.")
+                    break
+
+        flat_individual = [str(x) for x in best_individual]
+        # 输出最终结果
+        print(f"\nFinal result - Best fitness: {best_fitness:.6f}, Best individual: {', '.join(flat_individual)}")
+
+        # 绘制每次迭代的最佳适应度
+        plt.plot(best_fitnesses, label='Best fitness per generation')
+        plt.xlabel('Generation')
+        plt.ylabel('Fitness')
+        plt.title('Best Fitness per Generation')
+
+        # 标记全局最优解
+        best_generation = best_fitnesses.index(best_fitness)
+        plt.plot(best_generation, best_fitness, 'ro', label='Global best solution')
+
+        # 显示图例和图形
+        plt.legend()
+        plt.show()

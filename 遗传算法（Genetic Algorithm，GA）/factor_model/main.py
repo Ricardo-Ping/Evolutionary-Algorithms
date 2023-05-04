@@ -12,7 +12,7 @@ from GeneticAlgorithmFactory import GeneticAlgorithmFactory
 # 设置遗传算法的参数
 population_size = 100
 num_variables = 2
-num_generations = 100
+num_generations = 1000
 num_parents = 20
 num_bits = 10  # 每个个体包含的基因数量
 num_bits_list = [5, 10]  # 可变编码长度
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     # 使用 GeneticAlgorithmFactory 创建 SampleProblem 实例
     print('请选择编码方式，如果选择二进制则选1，如果选择实数择选0')
     flag = input()
-    print('请选择不变长编码（my_fitness_function）还是变长编码（Init_var）或者操作时变长（Oper_var）')
+    print('请选择不变长编码（my_fitness_function）还是变长编码（Init_var）或者操作时变长（Oper_var）,或者使用二进制梯度下降（BinaryWithGradient）和实数梯度下降（RealWithGradient）')
     fitness_function_type = input()
     if fitness_function_type == "my_fitness_function":
         num_bits_all = num_bits
@@ -37,6 +37,12 @@ if __name__ == '__main__':
     elif fitness_function_type == 'Oper_var':
         num_bits_all = num_bits_list
         problem_type = "Oper_var"
+    elif fitness_function_type == 'BinaryWithGradient':
+        num_bits_all = num_bits
+        problem_type = "BinaryWithGradient"
+    elif fitness_function_type == 'RealWithGradient':
+        num_bits_all = num_bits
+        problem_type = "RealWithGradient"
 
     problem = GeneticAlgorithmFactory.create_genetic_algorithm(
         problem_type=problem_type,

@@ -5,7 +5,7 @@
 # @Project : Genetic Algorithm.py
 # @Function ：
 # fitness_function_factory.py
-from fitness_function import MyFitnessFunction, Init_var, Oper_var
+from fitness_function import MyFitnessFunction, Init_var, Oper_var, BinaryWithGradient, RealWithGradient
 
 
 class FitnessFunctionFactory:
@@ -18,5 +18,9 @@ class FitnessFunctionFactory:
             return Init_var()
         elif function_type == 'Oper_var':
             return Oper_var()
+        elif function_type == 'BinaryWithGradient':
+            return BinaryWithGradient()
+        elif function_type == 'RealWithGradient':
+            return RealWithGradient()
         else:
             raise ValueError("Invalid fitness function type")

@@ -6,7 +6,7 @@
 # @Function ：
 
 # GeneticAlgorithmFactory.py
-from Problem import SampleProblem, Init_var, Oper_var
+from Problem import SampleProblem, Init_var, Oper_var, BinaryWithGradient, RealWithGradient
 
 
 class GeneticAlgorithmFactory:
@@ -19,5 +19,9 @@ class GeneticAlgorithmFactory:
             return Init_var(*args, **kwargs)
         elif problem_type == 'Oper_var':
             return Oper_var(*args, **kwargs)
+        elif problem_type == 'BinaryWithGradient':
+            return BinaryWithGradient(*args, **kwargs)
+        elif problem_type == 'RealWithGradient':
+            return RealWithGradient(*args, **kwargs)
         else:
             raise ValueError("Invalid problem type")
